@@ -10720,12 +10720,12 @@ function Reset-HVMachine {
     [System.gc]::collect()
   }
 }
-function Rebuild-HVMachine {
+function Initialize-HVMachine {
 	<#
 	.Synopsis
-	   Rebuilds Horizon View desktops.
+	   Initializes Horizon View desktops.
 	.DESCRIPTION
-	   Queries and rebuilds virtual machines (create new cloned VM with same name from same template and applies same customization specification), the machines list would be determined
+	   Queries and Initializes virtual machines (create new cloned VM with same name from same template and applies same customization specification), the machines list would be determined
      based on queryable fields machineName. Use an asterisk (*) as wildcard. If the result has multiple machines all will be reset.
 	.PARAMETER MachineName
 	   The name of the Machine(s) to query for.
@@ -10734,10 +10734,10 @@ function Rebuild-HVMachine {
 		Reference to Horizon View Server to query the virtual machines from. If the value is not passed or null then
 		first element from global:DefaultHVServers would be considered in-place of hvServer
 	.EXAMPLE
-	   rebuild-HVMachine -MachineName 'PowerCLIVM'
+	   Initialize-HVMachine -MachineName 'PowerCLIVM'
 	   Queries VM(s) with given parameter machineName
 	.EXAMPLE
-	   rebuild-HVMachine -MachineName 'PowerCLIVM*'
+	   Initialize-HVMachine -MachineName 'PowerCLIVM*'
 	   Queries VM(s) with given parameter machinename with wildcard character *
 	.NOTES
 		Author                      : Mayank Goyal
@@ -10777,14 +10777,14 @@ function Rebuild-HVMachine {
     $machineList = Find-HVMachine -Param $PSBoundParameters
 
     if (!$machineList) {
-      Write-Host "Rebuild-HVMachine: No Virtual Machine(s) Found with given search parameters"
+      Write-Host "Initialize-HVMachine: No Virtual Machine(s) Found with given search parameters"
       break
     }
   }
   Process {
     if ($Force -or $PSCmdlet.ShouldProcess($MachineName)) {
       foreach ($machine in $machinelist){
-        $services.machine.Machine_RebuildMachines($machine.id)
+        $services.machine.Machine_InitializeMachines($machine.id)
       }
     }
   }
@@ -13357,7 +13357,7 @@ Export-ModuleMember -Function Get-HVPoolSummary, New-HVPool, Remove-HVPool, Get-
 Export-ModuleMember -Function Get-HVApplication, Remove-HVApplication, New-HVManualApplication, Get-HVPreInstalledApplication, New-HVPreInstalledApplication, Set-HVApplication
 # Entitlement related
 Export-ModuleMember -Function New-HVEntitlement,Get-HVEntitlement,Remove-HVEntitlement
-Export-ModuleMember -Function Set-HVMachine, Reset-HVMachine, Restart-HVMachine, Rebuild-HVMachine, Remove-HVMachine
+Export-ModuleMember -Function Set-HVMachine, Reset-HVMachine, Restart-HVMachine, Initialize-HVMachine, Remove-HVMachine
 # Cloud Pod Architecture related
 Export-ModuleMember -Function New-HVGlobalEntitlement, Remove-HVGlobalEntitlement, Get-HVGlobalEntitlement, Set-HVGlobalEntitlement, New-HVPodFederation, Remove-HVPodFederation, Get-HVPodFederation, Set-HVPodFederation
 Export-ModuleMember -Function Get-HVSite, New-HVSite, New-HVHomeSite, Remove-HVSite, Get-HVHomeSite, Set-HVSite, Register-HVPod, Unregister-HVPod
